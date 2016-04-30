@@ -7,6 +7,8 @@ package twilightforest.world;
 import java.util.List;
 import java.util.Random;
 
+import fwg.generator.ChunkGeneratorSkyDimension;
+import fwg.world.ManagerFWG;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.entity.EnumCreatureType;
@@ -40,7 +42,8 @@ import cpw.mods.fml.common.eventhandler.Event.Result;
 //            MapGenBase, MathHelper, BlockSand, WorldGenLakes, 
 //            WorldGenDungeons, SpawnerAnimals, IProgressUpdate
 
-public class ChunkProviderTwilightForest implements IChunkProvider {
+public class ChunkProviderTwilightForest extends ChunkGeneratorSkyDimension
+		implements IChunkProvider {
 	private Random rand;
 	//private NoiseGeneratorOctaves noiseGen1;
 	//private NoiseGeneratorOctaves noiseGen2;
@@ -83,6 +86,7 @@ public class ChunkProviderTwilightForest implements IChunkProvider {
 	private MapGenTFHollowTree hollowTreeGenerator;
 
 	public ChunkProviderTwilightForest(World world, long l, boolean flag) {
+		super(world, l, flag, 0, 0);
 		stoneNoise = new double[256];
 		caveGenerator = new TFGenCaves();
 	
@@ -126,17 +130,29 @@ public class ChunkProviderTwilightForest implements IChunkProvider {
 		rand.setSeed(cx * 0x4f9939f508L + cz * 0x1ef1565bd5L);
 		Block blockStorage[] = new Block[16 * 16 * TFWorld.CHUNKHEIGHT];
 		byte metaStorage[] = new byte[16 * 16 * TFWorld.CHUNKHEIGHT];
-		generateTerrain2(cx, cz, blockStorage);
-		
+
+		// FWG2 mod begin
+		if (!worldObj.isRemote) {
+			biomesForGeneration = new ManagerFWG(worldObj, true, 0).getBiomesForGeneration(
+					//this.biomesForGeneration, cx * 4 - 2, cz * 4 - 2, 10, 10);
+					this.biomesForGeneration, cx * 16, cz * 16, 16, 16);
+		}
+		double ad[] = ManagerFWG.temperature;
+		generateTerrain(cx, cz, blockStorage, biomesForGeneration, ad);
+		// FWG mod end
+
+		//generateTerrain2(cx, cz, blockStorage);
+		this.makeLandPerBiome2(cx * 4, 0, cz * 4);
+
 		squishTerrain(blockStorage);
-		
+
 		addDarkForestCanopy2(cx, cz, blockStorage, metaStorage);
-		biomesForGeneration = worldObj.getWorldChunkManager().loadBlockGeneratorData(biomesForGeneration, cx * 16, cz * 16, 16, 16);
+		//biomesForGeneration = worldObj.getWorldChunkManager().loadBlockGeneratorData(biomesForGeneration, cx * 16, cz * 16, 16, 16);
 		addGlaciers(cx, cz, blockStorage, metaStorage, biomesForGeneration);
 		deformTerrainForFeature(cx, cz, blockStorage, metaStorage);
 		replaceBlocksForBiome(cx, cz, blockStorage, metaStorage, biomesForGeneration);
 		caveGenerator.func_151539_a(this, worldObj, cx, cz, blockStorage);
-		ravineGenerator.func_151539_a(this, worldObj, cx, cz, blockStorage);
+		//ravineGenerator.func_151539_a(this, worldObj, cx, cz, blockStorage);
 		// fake byte array
 		Block[] fake = new Block[0];
 

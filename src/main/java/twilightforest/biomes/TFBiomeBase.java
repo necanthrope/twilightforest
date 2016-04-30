@@ -402,7 +402,8 @@ public abstract class TFBiomeBase extends BiomeGenBase  {
 
             if (y <= 0 + rand.nextInt(5))
             {
-                blockStorage[index] = Blocks.bedrock;
+                //blockStorage[index] = Blocks.bedrock;
+				blockStorage[index] = Blocks.air;
             }
             else
             {

@@ -3,6 +3,8 @@
  */
 package twilightforest.world;
 
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.registry.ExistingSubstitutionException;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
@@ -88,13 +90,24 @@ public class WorldProviderTwilightForest extends WorldProviderSurface {
      */
     public IChunkProvider createChunkGenerator()
     {
-    	// save chunk generator?
-    	if (this.chunkProvider == null) {
-	    	this.chunkProvider = new ChunkProviderTwilightForest(worldObj, worldObj.getSeed(), worldObj.getWorldInfo().isMapFeaturesEnabled());
-	        return this.chunkProvider;
-    	} else {
-    		return new ChunkProviderTwilightForest(worldObj, worldObj.getSeed(), worldObj.getWorldInfo().isMapFeaturesEnabled());
-    	}
+		if (Loader.isModLoaded("FWG")) {
+			if (this.chunkProvider == null) {
+				this.chunkProvider = new ChunkProviderTwilightForest(worldObj, worldObj.getSeed(), worldObj.getWorldInfo().isMapFeaturesEnabled());
+				return this.chunkProvider;
+			} else {
+				return new ChunkProviderTwilightForest(worldObj, worldObj.getSeed(), worldObj.getWorldInfo().isMapFeaturesEnabled());
+			}
+		}
+
+		else {
+			// save chunk generator?
+			if (this.chunkProvider == null) {
+				this.chunkProvider = new ChunkProviderTwilightForest(worldObj, worldObj.getSeed(), worldObj.getWorldInfo().isMapFeaturesEnabled());
+				return this.chunkProvider;
+			} else {
+				return new ChunkProviderTwilightForest(worldObj, worldObj.getSeed(), worldObj.getWorldInfo().isMapFeaturesEnabled());
+			}
+		}
     }
     
     public ChunkProviderTwilightForest getChunkProvider() {

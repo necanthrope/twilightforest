@@ -41,6 +41,7 @@ public class TFWorldChunkManager extends WorldChunkManager
         myBiomesToSpawnIn.add(TFBiomeBase.clearing);
         myBiomesToSpawnIn.add(TFBiomeBase.tfSwamp);
         myBiomesToSpawnIn.add(TFBiomeBase.mushrooms);
+
     }
 
     public TFWorldChunkManager(long par1, WorldType par3WorldType)
